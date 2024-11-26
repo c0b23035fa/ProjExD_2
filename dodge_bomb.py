@@ -46,7 +46,6 @@ def gameover(screen: pg.Surface) -> None:
     pg.display.update()
     time.sleep(5)
 
-
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     bb_imgs = []
     bb_accs = [a for a in range(1, 11)]
@@ -56,6 +55,20 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
         pg.draw.circle(bb_img, (255, 0, 0), (10 * r, 10 * r), 10 * r)
         bb_imgs.append(bb_img)
     return bb_accs, bb_imgs
+
+def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
+        kk_images = {
+        (0, 0): pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9),
+        (+5, 0): pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9),
+        (+5, -5): pg.transform.rotozoom(pg.image.load("fig/3.png"), -45, 0.9),
+        (+5, +5): pg.transform.rotozoom(pg.image.load("fig/3.png"), 45, 0.9),
+        (-5, 0): pg.transform.rotozoom(pg.image.load("fig/3.png"), 180, 0.9),
+        (-5, -5): pg.transform.rotozoom(pg.image.load("fig/3.png"), -135, 0.9),
+        (-5, +5): pg.transform.rotozoom(pg.image.load("fig/3.png"), 135, 0.9),
+        (0, -5): pg.transform.rotozoom(pg.image.load("fig/3.png"), -90, 0.9),
+        (0, +5): pg.transform.rotozoom(pg.image.load("fig/3.png"), 90, 0.9),
+    }
+        return kk_images.get(sum_mv, kk_images[(0, 0)]) 
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
