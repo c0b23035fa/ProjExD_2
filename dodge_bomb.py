@@ -14,7 +14,6 @@ DELTA = {
 }
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-
 def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     """
     引数で与えられたRectが画面の中か外かを判定する
@@ -47,6 +46,17 @@ def gameover(screen: pg.Surface) -> None:
     pg.display.update()
     time.sleep(5)
 
+
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    bb_imgs = []
+    bb_accs = [a for a in range(1, 11)]
+    for r in range(1, 11):
+        bb_img = pg.Surface((20 * r, 20 * r))
+        bb_img.set_colorkey((0, 0, 0))  # 四隅の黒を透過させる
+        pg.draw.circle(bb_img, (255, 0, 0), (10 * r, 10 * r), 10 * r)
+        bb_imgs.append(bb_img)
+    return bb_accs, bb_imgs
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -54,9 +64,10 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
-    bb_img = pg.Surface((20, 20))  # 爆弾用の空Surface
-    pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)  # 爆弾円を描く
-    bb_img.set_colorkey((0, 0, 0))  # 四隅の黒を透過させる
+    bb_accs, bb_imgs = init_bb_imgs()
+    bb_img = bb_imgs[0]  # 爆弾用の空Surface
+    # pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)  # 爆弾円を描く
+    # bb_img.set_colorkey((0, 0, 0))  # 四隅の黒を透過させる
     bb_rct = bb_img.get_rect()  # 爆弾Rectの抽出
     bb_rct.centerx = random.randint(0, WIDTH)
     bb_rct.centery = random.randint(0, HEIGHT)
@@ -82,14 +93,16 @@ def main():
         # こうかとんが画面外なら，元の場所に戻す
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
-        screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx, vy)  # 爆弾動く      
-        bb_rct.move_ip(vx, vy)  # 爆弾動く
+        screen.blit(kk_img, kk_rct)    
         yoko, tate = check_bound(bb_rct)
         if not yoko:  # 横にはみ出てる
             vx *= -1
         if not tate:  # 縦にはみ出てる
             vy *= -1
+        avx = vx*bb_accs[min(tmr//500, 9)]
+        avy = vy*bb_accs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        bb_rct.move_ip(avx, avy)  # 爆弾動く  
         screen.blit(bb_img, bb_rct)
         pg.display.update()
         tmr += 1
