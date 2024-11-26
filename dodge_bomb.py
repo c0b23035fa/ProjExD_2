@@ -56,7 +56,7 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
         bb_imgs.append(bb_img)
     return bb_accs, bb_imgs
 
-def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface:
+def get_kk_img(sum_mv: tuple[int, int]) -> pg.Surface: #飛ぶ方向に従ってこうかとん画像を切り替える
         kk_images = {
         (0, 0): pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9),
         (+5, 0): pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9),
